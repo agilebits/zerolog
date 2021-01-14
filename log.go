@@ -102,7 +102,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"os"
 	"strconv"
 )
 
@@ -116,12 +115,14 @@ const (
 	InfoLevel
 	// WarnLevel defines warn log level.
 	WarnLevel
+	// NotifyLevel defined notify log level.
+	NotifyLevel
 	// ErrorLevel defines error log level.
 	ErrorLevel
-	// FatalLevel defines fatal log level.
-	FatalLevel
-	// PanicLevel defines panic log level.
-	PanicLevel
+	// CriticalLevel defines critical log level.
+	CriticalLevel
+	// AlertLevel defines alert log level.
+	AlertLevel
 	// NoLevel defines an absent log level.
 	NoLevel
 	// Disabled disables the logger.
@@ -141,12 +142,14 @@ func (l Level) String() string {
 		return "info"
 	case WarnLevel:
 		return "warn"
+	case NotifyLevel:
+		return "notify"
 	case ErrorLevel:
 		return "error"
-	case FatalLevel:
-		return "fatal"
-	case PanicLevel:
-		return "panic"
+	case CriticalLevel:
+		return "critical"
+	case AlertLevel:
+		return "alert"
 	case NoLevel:
 		return ""
 	}
@@ -165,16 +168,18 @@ func ParseLevel(levelStr string) (Level, error) {
 		return InfoLevel, nil
 	case LevelFieldMarshalFunc(WarnLevel):
 		return WarnLevel, nil
+	case LevelFieldMarshalFunc(NotifyLevel):
+		return NotifyLevel, nil
 	case LevelFieldMarshalFunc(ErrorLevel):
 		return ErrorLevel, nil
-	case LevelFieldMarshalFunc(FatalLevel):
-		return FatalLevel, nil
-	case LevelFieldMarshalFunc(PanicLevel):
-		return PanicLevel, nil
+	case LevelFieldMarshalFunc(CriticalLevel):
+		return CriticalLevel, nil
+	case LevelFieldMarshalFunc(AlertLevel):
+		return AlertLevel, nil
 	case LevelFieldMarshalFunc(NoLevel):
 		return NoLevel, nil
 	}
-	return NoLevel, fmt.Errorf("Unknown Level String: '%s', defaulting to NoLevel", levelStr)
+	return NoLevel, fmt.Errorf("unknown Level String: '%s', defaulting to NoLevel", levelStr)
 }
 
 // A Logger represents an active logging object that generates lines
@@ -310,6 +315,13 @@ func (l *Logger) Warn() *Event {
 	return l.newEvent(WarnLevel, nil)
 }
 
+// Notify starts a new message with notify level.
+//
+// You must call Msg on the returned event in order to send the event.
+func (l *Logger) Notify() *Event {
+	return l.newEvent(NotifyLevel, nil)
+}
+
 // Error starts a new message with error level.
 //
 // You must call Msg on the returned event in order to send the event.
@@ -329,25 +341,21 @@ func (l *Logger) Err(err error) *Event {
 	return l.Info()
 }
 
-// Fatal starts a new message with fatal level. The os.Exit(1) function
-// is called by the Msg method, which terminates the program immediately.
+// Critical starts a new message with critical level.
 //
 // You must call Msg on the returned event in order to send the event.
-func (l *Logger) Fatal() *Event {
-	return l.newEvent(FatalLevel, func(msg string) { os.Exit(1) })
+func (l *Logger) Critical() *Event {
+	return l.newEvent(CriticalLevel, nil)
 }
 
-// Panic starts a new message with panic level. The panic() function
-// is called by the Msg method, which stops the ordinary flow of a goroutine.
+// Alert starts a new message with panic level.
 //
 // You must call Msg on the returned event in order to send the event.
-func (l *Logger) Panic() *Event {
-	return l.newEvent(PanicLevel, func(msg string) { panic(msg) })
+func (l *Logger) Alert() *Event {
+	return l.newEvent(AlertLevel, nil)
 }
 
-// WithLevel starts a new message with level. Unlike Fatal and Panic
-// methods, WithLevel does not terminate the program or stop the ordinary
-// flow of a gourotine when used with their respective levels.
+// WithLevel starts a new message with level.
 //
 // You must call Msg on the returned event in order to send the event.
 func (l *Logger) WithLevel(level Level) *Event {
@@ -360,12 +368,14 @@ func (l *Logger) WithLevel(level Level) *Event {
 		return l.Info()
 	case WarnLevel:
 		return l.Warn()
+	case NotifyLevel:
+		return l.Notify()
 	case ErrorLevel:
 		return l.Error()
-	case FatalLevel:
-		return l.newEvent(FatalLevel, nil)
-	case PanicLevel:
-		return l.newEvent(PanicLevel, nil)
+	case CriticalLevel:
+		return l.newEvent(CriticalLevel, nil)
+	case AlertLevel:
+		return l.newEvent(AlertLevel, nil)
 	case NoLevel:
 		return l.Log()
 	case Disabled:

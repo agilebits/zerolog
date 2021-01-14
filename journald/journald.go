@@ -56,11 +56,13 @@ func levelToJPrio(zLevel string) journal.Priority {
 		return journal.PriInfo
 	case zerolog.WarnLevel:
 		return journal.PriWarning
+	case zerolog.NotifyLevel:
+		return journal.PriWarning
 	case zerolog.ErrorLevel:
 		return journal.PriErr
-	case zerolog.FatalLevel:
+	case zerolog.CriticalLevel:
 		return journal.PriCrit
-	case zerolog.PanicLevel:
+	case zerolog.AlertLevel:
 		return journal.PriEmerg
 	case zerolog.NoLevel:
 		return journal.PriNotice

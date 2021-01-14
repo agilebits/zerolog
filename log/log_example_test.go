@@ -106,17 +106,17 @@ func ExampleError() {
 }
 
 // Example of a log at a particular "level" (in this case, "fatal")
-func ExampleFatal() {
+func ExampleCritical() {
 	setup()
 	err := errors.New("A repo man spends his life getting into tense situations")
 	service := "myservice"
 
-	log.Fatal().
+	log.Critical().
 		Err(err).
 		Str("service", service).
 		Msgf("Cannot start %s", service)
 
-	// Outputs: {"level":"fatal","time":1199811905,"error":"A repo man spends his life getting into tense situations","service":"myservice","message":"Cannot start myservice"}
+	// Outputs: {"level":"critical","time":1199811905,"error":"A repo man spends his life getting into tense situations","service":"myservice","message":"Cannot start myservice"}
 }
 
 // TODO: Panic

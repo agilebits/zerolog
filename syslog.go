@@ -63,12 +63,14 @@ func (sw syslogWriter) WriteLevel(level Level, p []byte) (n int, err error) {
 		err = sw.w.Info(sw.prefix + string(p))
 	case WarnLevel:
 		err = sw.w.Warning(sw.prefix + string(p))
+	case NotifyLevel:
+		err = sw.w.Warning(sw.prefix + string(p))
 	case ErrorLevel:
 		err = sw.w.Err(sw.prefix + string(p))
-	case FatalLevel:
-		err = sw.w.Emerg(sw.prefix + string(p))
-	case PanicLevel:
+	case CriticalLevel:
 		err = sw.w.Crit(sw.prefix + string(p))
+	case AlertLevel:
+		err = sw.w.Emerg(sw.prefix + string(p))
 	case NoLevel:
 		err = sw.w.Info(sw.prefix + string(p))
 	default:
