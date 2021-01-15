@@ -429,9 +429,9 @@ func TestLevel(t *testing.T) {
 		}
 	})
 
-	t.Run("NoLevel/Panic", func(t *testing.T) {
+	t.Run("NoLevel/Critical", func(t *testing.T) {
 		out := &bytes.Buffer{}
-		log := New(out).Level(PanicLevel)
+		log := New(out).Level(CriticalLevel)
 		log.Log().Msg("test")
 		if got, want := decodeIfBinaryToString(out.Bytes()), `{"message":"test"}`+"\n"; got != want {
 			t.Errorf("invalid log output:\ngot:  %v\nwant: %v", got, want)
@@ -462,9 +462,10 @@ func TestGetLevel(t *testing.T) {
 		DebugLevel,
 		InfoLevel,
 		WarnLevel,
+		NotifyLevel,
 		ErrorLevel,
-		FatalLevel,
-		PanicLevel,
+		CriticalLevel,
+		AlertLevel,
 		NoLevel,
 		Disabled,
 	}

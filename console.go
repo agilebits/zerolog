@@ -320,21 +320,28 @@ func consoleDefaultFormatLevel(noColor bool) Formatter {
 	return func(i interface{}) string {
 		var l string
 		if ll, ok := i.(string); ok {
-			switch ll {
-			case "trace":
+			lvl, err := ParseLevel(ll)
+			if err != nil {
+				l = colorize("???", colorBold, noColor)
+			}
+
+			switch lvl {
+			case TraceLevel:
 				l = colorize("TRC", colorMagenta, noColor)
-			case "debug":
+			case DebugLevel:
 				l = colorize("DBG", colorYellow, noColor)
-			case "info":
+			case InfoLevel:
 				l = colorize("INF", colorGreen, noColor)
-			case "warn":
+			case WarnLevel:
 				l = colorize("WRN", colorRed, noColor)
-			case "error":
+			case NotifyLevel:
+				l = colorize("NTF", colorRed, noColor)
+			case ErrorLevel:
 				l = colorize(colorize("ERR", colorRed, noColor), colorBold, noColor)
-			case "fatal":
-				l = colorize(colorize("FTL", colorRed, noColor), colorBold, noColor)
-			case "panic":
-				l = colorize(colorize("PNC", colorRed, noColor), colorBold, noColor)
+			case CriticalLevel:
+				l = colorize(colorize("CRT", colorRed, noColor), colorBold, noColor)
+			case AlertLevel:
+				l = colorize(colorize("ALR", colorRed, noColor), colorBold, noColor)
 			default:
 				l = colorize("???", colorBold, noColor)
 			}

@@ -73,6 +73,13 @@ func Warn() *zerolog.Event {
 	return Logger.Warn()
 }
 
+// Notify starts a new message with notify level.
+//
+// You must call Msg on the returned event in order to send the event.
+func Notify() *zerolog.Event {
+	return Logger.Notify()
+}
+
 // Error starts a new message with error level.
 //
 // You must call Msg on the returned event in order to send the event.
@@ -80,20 +87,18 @@ func Error() *zerolog.Event {
 	return Logger.Error()
 }
 
-// Fatal starts a new message with fatal level. The os.Exit(1) function
-// is called by the Msg method.
+// Critical starts a new message with critical level.
 //
 // You must call Msg on the returned event in order to send the event.
-func Fatal() *zerolog.Event {
-	return Logger.Fatal()
+func Critical() *zerolog.Event {
+	return Logger.Critical()
 }
 
-// Panic starts a new message with panic level. The message is also sent
-// to the panic function.
+// Alert starts a new message with panic level.
 //
 // You must call Msg on the returned event in order to send the event.
-func Panic() *zerolog.Event {
-	return Logger.Panic()
+func Alert() *zerolog.Event {
+	return Logger.Alert()
 }
 
 // WithLevel starts a new message with level.
