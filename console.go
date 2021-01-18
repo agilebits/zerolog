@@ -402,3 +402,14 @@ func consoleDefaultFormatErrFieldValue(noColor bool) Formatter {
 		return colorize(fmt.Sprintf("%s", i), colorRed, noColor)
 	}
 }
+
+func HideNoLevelFormatter(noColor bool) Formatter {
+	return func(i interface{}) string {
+		if i == nil {
+			return ""
+		}
+
+		defaultFormatter := consoleDefaultFormatLevel(noColor)
+		return defaultFormatter(i)
+	}
+}
