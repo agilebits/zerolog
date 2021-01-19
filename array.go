@@ -67,6 +67,13 @@ func (a *Array) Object(obj LogObjectMarshaler) *Array {
 	return a
 }
 
+// Event appends an event to the array.
+func (a *Array) Event(event *Event) *Array {
+	buf := enc.AppendEndMarker(event.buf)
+	a.buf = append(enc.AppendArrayDelim(a.buf), buf...)
+	return a
+}
+
 // Str append append the val as a string to the array.
 func (a *Array) Str(val string) *Array {
 	a.buf = enc.AppendString(enc.AppendArrayDelim(a.buf), val)

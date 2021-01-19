@@ -80,6 +80,11 @@ func ExampleLogger_Hook() {
 }
 
 func ExampleLogger_Print() {
+	// The default global level is Trace
+	globalLevel := zerolog.GlobalLevel()
+	zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	defer zerolog.SetGlobalLevel(globalLevel)
+
 	log := zerolog.New(os.Stdout)
 
 	log.Print("hello world")
@@ -88,6 +93,11 @@ func ExampleLogger_Print() {
 }
 
 func ExampleLogger_Printf() {
+	// The default global level is Trace
+	globalLevel := zerolog.GlobalLevel()
+	zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	defer zerolog.SetGlobalLevel(globalLevel)
+
 	log := zerolog.New(os.Stdout)
 
 	log.Printf("hello %s", "world")
@@ -107,6 +117,11 @@ func ExampleLogger_Trace() {
 }
 
 func ExampleLogger_Debug() {
+	// The default global level is Trace
+	globalLevel := zerolog.GlobalLevel()
+	zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	defer zerolog.SetGlobalLevel(globalLevel)
+
 	log := zerolog.New(os.Stdout)
 
 	log.Debug().

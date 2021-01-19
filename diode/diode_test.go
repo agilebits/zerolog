@@ -15,6 +15,11 @@ import (
 )
 
 func TestNewWriter(t *testing.T) {
+	// The default global level is Trace
+	globalLevel := zerolog.GlobalLevel()
+	zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	defer zerolog.SetGlobalLevel(globalLevel)
+
 	buf := bytes.Buffer{}
 	w := diode.NewWriter(&buf, 1000, 0, func(missed int) {
 		fmt.Printf("Dropped %d messages\n", missed)

@@ -33,6 +33,10 @@ func setup() {
 // Note that both Print and Printf are at the debug log level by default
 func ExamplePrint() {
 	setup()
+	// The default global level is Trace
+	globalLevel := zerolog.GlobalLevel()
+	zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	defer zerolog.SetGlobalLevel(globalLevel)
 
 	log.Print("hello world")
 	// Output: {"level":"debug","time":1199811905,"message":"hello world"}
@@ -41,6 +45,10 @@ func ExamplePrint() {
 // Simple logging example using the Printf function in the log package
 func ExamplePrintf() {
 	setup()
+	// The default global level is Trace
+	globalLevel := zerolog.GlobalLevel()
+	zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	defer zerolog.SetGlobalLevel(globalLevel)
 
 	log.Printf("hello %s", "world")
 	// Output: {"level":"debug","time":1199811905,"message":"hello world"}
@@ -75,6 +83,11 @@ func ExampleTrace() {
 
 // Example of a log at a particular "level" (in this case, "debug")
 func ExampleDebug() {
+	// The default global level is Trace
+	globalLevel := zerolog.GlobalLevel()
+	zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	defer zerolog.SetGlobalLevel(globalLevel)
+	
 	setup()
 	log.Debug().Msg("hello world")
 

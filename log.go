@@ -110,7 +110,7 @@ type Level int8
 
 const (
 	// DebugLevel defines debug log level.
-	DebugLevel Level = iota
+	TraceLevel Level = iota
 	// InfoLevel defines info log level.
 	InfoLevel
 	// WarnLevel defines warn log level.
@@ -129,15 +129,15 @@ const (
 	Disabled
 
 	// TraceLevel defines trace log level.
-	TraceLevel Level = -1
+	DebugLevel Level = -1
 )
 
 func (l Level) String() string {
 	switch l {
-	case TraceLevel:
-		return "trace"
 	case DebugLevel:
 		return "debug"
+	case TraceLevel:
+		return "trace"
 	case InfoLevel:
 		return "info"
 	case WarnLevel:
@@ -160,10 +160,10 @@ func (l Level) String() string {
 // returns an error if the input string does not match known values.
 func ParseLevel(levelStr string) (Level, error) {
 	switch levelStr {
-	case LevelFieldMarshalFunc(TraceLevel):
-		return TraceLevel, nil
 	case LevelFieldMarshalFunc(DebugLevel):
 		return DebugLevel, nil
+	case LevelFieldMarshalFunc(TraceLevel):
+		return TraceLevel, nil
 	case LevelFieldMarshalFunc(InfoLevel):
 		return InfoLevel, nil
 	case LevelFieldMarshalFunc(WarnLevel):
@@ -210,7 +210,7 @@ func New(w io.Writer) Logger {
 	if !ok {
 		lw = levelWriterAdapter{w}
 	}
-	return Logger{w: lw, level: TraceLevel}
+	return Logger{w: lw, level: DebugLevel}
 }
 
 // Nop returns a disabled logger for which all operation are no-op.
@@ -360,10 +360,10 @@ func (l *Logger) Alert() *Event {
 // You must call Msg on the returned event in order to send the event.
 func (l *Logger) WithLevel(level Level) *Event {
 	switch level {
-	case TraceLevel:
-		return l.Trace()
 	case DebugLevel:
 		return l.Debug()
+	case TraceLevel:
+		return l.Trace()
 	case InfoLevel:
 		return l.Info()
 	case WarnLevel:
