@@ -11,6 +11,11 @@ import (
 )
 
 func ExampleNewWriter() {
+	// The default global level is Trace
+	globalLevel := zerolog.GlobalLevel()
+	zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	defer zerolog.SetGlobalLevel(globalLevel)
+
 	w := diode.NewWriter(os.Stdout, 1000, 0, func(missed int) {
 		fmt.Printf("Dropped %d messages\n", missed)
 	})

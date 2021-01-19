@@ -530,6 +530,11 @@ func TestLevelWriter(t *testing.T) {
 			p string
 		}{},
 	}
+
+	globalLevel := GlobalLevel()
+	SetGlobalLevel(DebugLevel)
+	defer SetGlobalLevel(globalLevel)
+
 	log := New(lw)
 	log.Trace().Msg("0")
 	log.Debug().Msg("1")
@@ -728,8 +733,8 @@ func TestLevelFieldMarshalFunc(t *testing.T) {
 	out := &bytes.Buffer{}
 	log := New(out)
 
-	log.Debug().Msg("test")
-	if got, want := decodeIfBinaryToString(out.Bytes()), `{"level":"DEBUG","message":"test"}`+"\n"; got != want {
+	log.Trace().Msg("test")
+	if got, want := decodeIfBinaryToString(out.Bytes()), `{"level":"TRACE","message":"test"}`+"\n"; got != want {
 		t.Errorf("invalid log output:\ngot:  %v\nwant: %v", got, want)
 	}
 	out.Reset()

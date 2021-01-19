@@ -124,6 +124,11 @@ func TestHook(t *testing.T) {
 			log.Error().Msg("")
 		}},
 	}
+
+	globalLevel := GlobalLevel()
+	SetGlobalLevel(DebugLevel)
+	defer SetGlobalLevel(globalLevel)
+
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {

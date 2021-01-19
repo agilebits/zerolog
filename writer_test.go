@@ -11,13 +11,13 @@ import (
 func TestMultiSyslogWriter(t *testing.T) {
 	sw := &syslogTestWriter{}
 	log := New(MultiLevelWriter(SyslogLevelWriter(sw)))
-	log.Debug().Msg("debug")
+	log.Trace().Msg("trace")
 	log.Info().Msg("info")
 	log.Warn().Msg("warn")
 	log.Error().Msg("error")
 	log.Log().Msg("nolevel")
 	want := []syslogEvent{
-		{"Debug", `{"level":"debug","message":"debug"}` + "\n"},
+		{"Debug", `{"level":"trace","message":"trace"}` + "\n"},
 		{"Info", `{"level":"info","message":"info"}` + "\n"},
 		{"Warning", `{"level":"warn","message":"warn"}` + "\n"},
 		{"Err", `{"level":"error","message":"error"}` + "\n"},
