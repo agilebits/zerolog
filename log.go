@@ -109,7 +109,7 @@ import (
 type Level int8
 
 const (
-	// DebugLevel defines debug log level.
+	// TraceLevel defines trace log level.
 	TraceLevel Level = iota
 	// InfoLevel defines info log level.
 	InfoLevel
@@ -128,7 +128,7 @@ const (
 	// Disabled disables the logger.
 	Disabled
 
-	// TraceLevel defines trace log level.
+	// DebugLevel defines debug log level.
 	DebugLevel Level = -1
 )
 
