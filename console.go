@@ -57,14 +57,15 @@ type ConsoleWriter struct {
 	// PartsOrder defines the order of parts in output.
 	PartsOrder []string
 
-	FormatTimestamp     Formatter
-	FormatLevel         Formatter
-	FormatCaller        Formatter
-	FormatMessage       Formatter
-	FormatFieldName     Formatter
-	FormatFieldValue    Formatter
-	FormatErrFieldName  Formatter
-	FormatErrFieldValue Formatter
+	FormatTimestamp         Formatter
+	FormatLevel             Formatter
+	FormatLevelAbbreviation Formatter
+	FormatCaller            Formatter
+	FormatMessage           Formatter
+	FormatFieldName         Formatter
+	FormatFieldValue        Formatter
+	FormatErrFieldName      Formatter
+	FormatErrFieldValue     Formatter
 }
 
 // NewConsoleWriter creates and initializes a new ConsoleWriter.
@@ -210,8 +211,13 @@ func (w ConsoleWriter) writePart(buf *bytes.Buffer, evt map[string]interface{}, 
 
 	switch p {
 	case LevelFieldName:
+		levelAbbreviator := consoleDefaultFormatLevelAbbreviation()
+		if w.FormatLevelAbbreviation != nil {
+			levelAbbreviator = w.FormatLevelAbbreviation
+		}
+
 		if w.FormatLevel == nil {
-			f = consoleDefaultFormatLevel(w.NoColor)
+			f = consoleDefaultFormatLevel(w.NoColor, levelAbbreviator)
 		} else {
 			f = w.FormatLevel
 		}
@@ -316,43 +322,83 @@ func consoleDefaultFormatTimestamp(timeFormat string, noColor bool) Formatter {
 	}
 }
 
-func consoleDefaultFormatLevel(noColor bool) Formatter {
+func consoleDefaultFormatLevel(noColor bool, levelAbbreviator Formatter) Formatter {
 	return func(i interface{}) string {
 		var l string
 		if ll, ok := i.(string); ok {
 			lvl, err := ParseLevel(ll)
 			if err != nil {
-				l = colorize("???", colorBold, noColor)
+				l = colorize(levelAbbreviator(ll), colorBold, noColor)
 			}
 
 			switch lvl {
-			case TraceLevel:
-				l = colorize("TRC", colorMagenta, noColor)
 			case DebugLevel:
-				l = colorize("DBG", colorYellow, noColor)
+				l = colorize(levelAbbreviator(lvl), colorYellow, noColor)
+			case TraceLevel:
+				l = colorize(levelAbbreviator(lvl), colorMagenta, noColor)
 			case InfoLevel:
-				l = colorize("INF", colorGreen, noColor)
+				l = colorize(levelAbbreviator(lvl), colorGreen, noColor)
 			case WarnLevel:
-				l = colorize("WRN", colorRed, noColor)
+				l = colorize(levelAbbreviator(lvl), colorRed, noColor)
 			case NotifyLevel:
-				l = colorize("NTF", colorRed, noColor)
+				l = colorize(levelAbbreviator(lvl), colorRed, noColor)
 			case ErrorLevel:
-				l = colorize(colorize("ERR", colorRed, noColor), colorBold, noColor)
+				l = colorize(colorize(levelAbbreviator(lvl), colorRed, noColor), colorBold, noColor)
 			case CriticalLevel:
-				l = colorize(colorize("CRT", colorRed, noColor), colorBold, noColor)
+				l = colorize(colorize(levelAbbreviator(lvl), colorRed, noColor), colorBold, noColor)
 			case AlertLevel:
-				l = colorize(colorize("ALR", colorRed, noColor), colorBold, noColor)
+				l = colorize(colorize(levelAbbreviator(lvl), colorRed, noColor), colorBold, noColor)
 			default:
-				l = colorize("???", colorBold, noColor)
+				l = colorize(levelAbbreviator(lvl), colorBold, noColor)
 			}
 		} else {
 			if i == nil {
-				l = colorize("???", colorBold, noColor)
+				l = colorize(levelAbbreviator(i), colorBold, noColor)
 			} else {
-				l = strings.ToUpper(fmt.Sprintf("%s", i))[0:3]
+				l = levelAbbreviator(i)
 			}
 		}
 		return l
+	}
+}
+
+func consoleDefaultFormatLevelAbbreviation() Formatter {
+	return func(i interface{}) string {
+
+		if i == nil {
+			return "???"
+		}
+
+		if _, ok := i.(string); ok {
+			// This case corresponds with a non-level string
+			return "???"
+		}
+
+		if level, ok := i.(Level); ok {
+			switch level {
+			case DebugLevel:
+				return "DBG"
+			case TraceLevel:
+				return "TRC"
+			case InfoLevel:
+				return "INF"
+			case WarnLevel:
+				return "WRN"
+			case NotifyLevel:
+				return "NTF"
+			case ErrorLevel:
+				return "ERR"
+			case CriticalLevel:
+				return "CRT"
+			case AlertLevel:
+				return "ALR"
+			default:
+				return "???"
+			}
+		}
+
+		// a non-nil interface, that is not a Level
+		return strings.ToUpper(fmt.Sprintf("%s", i))[0:3]
 	}
 }
 

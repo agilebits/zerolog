@@ -35,8 +35,8 @@ func ExampleNewConsoleWriter() {
 	out.NoColor = true // For testing purposes only
 	log := zerolog.New(out)
 
-	log.Debug().Str("foo", "bar").Msg("Hello World")
-	// Output: <nil> DBG Hello World foo=bar
+	log.Trace().Str("foo", "bar").Msg("Hello World")
+	// Output: <nil> TRC Hello World foo=bar
 }
 
 func ExampleNewConsoleWriter_customFormatters() {
