@@ -155,6 +155,24 @@ func (e *Event) Fields(fields map[string]interface{}) *Event {
 	return e
 }
 
+// FieldsWithFilter is a helper function to use a map to set fields using type assertion
+// with provided fields filtered
+func (e *Event) FieldsWithFilter(fields map[string]interface{}, filterFields ...string) *Event {
+	for _, filterField := range filterFields {
+		fields[filterField] = "[FILTERED]"
+	}
+	return e.Fields(fields)
+}
+
+// FieldsWithRemoved is a helper function to use a map to set fields using type assertion
+// with provided fields removed
+func (e *Event) FieldsWithRemove(fields map[string]interface{}, removeFields ...string) *Event {
+	for _, removeField := range removeFields {
+		delete(fields, removeField)
+	}
+	return e.Fields(fields)
+}
+
 // Dict adds the field key with a dict to the event context.
 // Use zerolog.Dict() to create the dictionary.
 func (e *Event) Dict(key string, dict *Event) *Event {

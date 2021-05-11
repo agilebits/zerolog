@@ -24,6 +24,24 @@ func (c Context) Fields(fields map[string]interface{}) Context {
 	return c
 }
 
+// FieldsWithFilter is a helper function to use a map to set fields using type assertion
+// with provided fields filtered
+func (c Context) FieldsWithFilter(fields map[string]interface{}, filterFields ...string) Context {
+	for _, filterField := range filterFields {
+		fields[filterField] = "[FILTERED]"
+	}
+	return c.Fields(fields)
+}
+
+// FieldsRemoved is a helper function to use a map to set fields using type assertion
+// with provided fields removed
+func (c Context) FieldsWithRemove(fields map[string]interface{}, removeFields ...string) Context {
+	for _, removeField := range removeFields {
+		delete(fields, removeField)
+	}
+	return c.Fields(fields)
+}
+
 // Dict adds the field key with the dict to the logger context.
 func (c Context) Dict(key string, dict *Event) Context {
 	dict.buf = enc.AppendEndMarker(dict.buf)

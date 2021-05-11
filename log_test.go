@@ -383,6 +383,36 @@ func TestFieldsDisabled(t *testing.T) {
 	}
 }
 
+func TestFieldsWithFilter(t *testing.T) {
+	out := &bytes.Buffer{}
+	log := New(out)
+	fields := map[string]interface{}{
+		"foo": "string foo",
+		"bar": "string bar",
+	}
+	filterField := "bar"
+	log.Log().FieldsWithFilter(fields, filterField).Msg("")
+
+	if got, want := decodeIfBinaryToString(out.Bytes()), `{"bar":"[FILTERED]","foo":"string foo"}`+"\n"; got != want {
+		t.Errorf("invalid log output:\ngot: %v\nwant: %v", got, want)
+	}
+}
+
+func TestFieldsWithRemove(t *testing.T) {
+	out := &bytes.Buffer{}
+	log := New(out)
+	fields := map[string]interface{}{
+		"foo": "string foo",
+		"bar": "string bar",
+	}
+	removeField := "bar"
+	log.Log().FieldsWithRemove(fields, removeField).Msg("")
+
+	if got, want := decodeIfBinaryToString(out.Bytes()), `{"foo":"string foo"}`+"\n"; got != want {
+		t.Errorf("invalid log output:\ngot: %v\nwant: %v", got, want)
+	}
+}
+
 func TestMsgf(t *testing.T) {
 	out := &bytes.Buffer{}
 	log := New(out)
