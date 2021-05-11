@@ -324,6 +324,19 @@ func TestFieldsArraySingleElement(t *testing.T) {
 	}
 }
 
+func TestFilter(t *testing.T) {
+	out := &bytes.Buffer{}
+	log := New(out)
+	log.Log().Fields(map[string]interface{}{
+		"foo": "my name is bar",
+		"baz": "hello world",
+	}).Filter("bar").Msg("")
+
+	if got, want := decodeIfBinaryToString(out.Bytes()), `{"baz":"hello world","foo":"my name is [FILTERED]"}`+"\n"; got != want {
+		t.Errorf("invalid log output:\ngot: %v\nwant: %v", got, want)
+	}
+}
+
 func TestFieldsArrayMultipleElement(t *testing.T) {
 	out := &bytes.Buffer{}
 	log := New(out)

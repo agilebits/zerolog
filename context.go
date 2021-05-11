@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"math"
 	"net"
+	"strings"
 	"time"
 )
 
@@ -40,6 +41,13 @@ func (c Context) FieldsWithRemove(fields map[string]interface{}, removeFields ..
 		delete(fields, removeField)
 	}
 	return c.Fields(fields)
+}
+
+// Filter is a helper function to redact a value from context
+func (c Context) Filter(filterString string) Context {
+	context := strings.Replace(decodeIfBinaryToString(c.l.context), filterString, "[FILTERED]", -1)
+	c.l.context = []byte(context)
+	return c
 }
 
 // Dict adds the field key with the dict to the logger context.

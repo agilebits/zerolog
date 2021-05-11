@@ -5,6 +5,7 @@ import (
 	"net"
 	"os"
 	"runtime"
+	"strings"
 	"sync"
 	"time"
 )
@@ -171,6 +172,13 @@ func (e *Event) FieldsWithRemove(fields map[string]interface{}, removeFields ...
 		delete(fields, removeField)
 	}
 	return e.Fields(fields)
+}
+
+// Filter is a helper function to filter a value from the buffer
+func (e *Event) Filter(filterString string) *Event {
+	buffer := strings.Replace(decodeIfBinaryToString(e.buf), filterString, "[FILTERED]", -1)
+	e.buf = []byte(buffer)
+	return e
 }
 
 // Dict adds the field key with a dict to the event context.
